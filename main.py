@@ -20,8 +20,10 @@ for li in li_element:
     }
     shops.append(shop)
 pprint(shops)
-# df = pd.DataFrame(shops)
-# df.to_csv('scraped_data.csv')
 
-# # Save to JSON
-# df.to_json('scraped_data.json')
+
+df = pd.DataFrame(shops)
+df.to_csv('scraped_data.csv')
+
+# Save to JSON
+df.to_json('scraped_data.json')
