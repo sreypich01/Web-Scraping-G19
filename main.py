@@ -7,6 +7,7 @@ import csv
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
+
 # Function to fetch the HTML content of a page
 def fetch_html(url):
     try:
@@ -17,21 +18,27 @@ def fetch_html(url):
         print(f"Error fetching URL {url}: {e}")
         return None
 
+
 # Functions to extract specific content from the soup
 def extract_headings(soup):
     return [h.text.strip() for i in range(1, 7) for h in soup.find_all(f'h{i}')]
 
+
 def extract_paragraphs(soup):
     return [p.text.strip() for p in soup.find_all('p')]
+
 
 def extract_lists(soup):
     return [li.text.strip() for ul in soup.find_all('ul') for li in ul.find_all('li')]
 
+
 def extract_links(soup):
     return [a.get('href') for a in soup.find_all('a') if a.get('href')]
 
+
 def extract_images(soup):
     return [img.get('src') for img in soup.find_all('img') if img.get('src')]
+
 
 # Function to find and return all valid internal links on a page
 def find_internal_links(html, base_url):
@@ -46,6 +53,7 @@ def find_internal_links(html, base_url):
 
     return links
 
+
 # Function to extract all specified data from a page
 def extract_data(html, page_name):
     soup = BeautifulSoup(html, 'html.parser')
@@ -58,6 +66,7 @@ def extract_data(html, page_name):
         "Images": extract_images(soup),
     }
 
+
 # Function to crawl the entire website and scrape data
 def crawl_and_scrape(base_url):
     visited = set()  # Track visited URLs
@@ -68,7 +77,7 @@ def crawl_and_scrape(base_url):
         current_url = queue.popleft()
         if current_url in visited:
             continue
-        
+
         print(f"Scraping: {current_url}")
         visited.add(current_url)
 
@@ -92,6 +101,7 @@ def crawl_and_scrape(base_url):
 
     return all_data
 
+
 # Function to crawl and scrape multiple websites
 def crawl_and_scrape_multiple(urls):
     all_data = {}
@@ -104,11 +114,13 @@ def crawl_and_scrape_multiple(urls):
             print(f"No data scraped for {base_url}. Skipping.")
     return all_data
 
+
 # Function to save data in JSON format
 def save_to_json(data, filepath):
     with open(filepath, 'w') as json_file:
         json.dump(data, json_file, indent=4)
     print(f"Data saved to {filepath} (JSON format)")
+
 
 # Function to save data in CSV format
 def save_to_csv(data, filepath):
@@ -132,21 +144,27 @@ def save_to_csv(data, filepath):
         writer.writerows(csv_data)
     print(f"Data saved to {filepath} (CSV format)")
 
+
 # Tkinter GUI for user input
 def run_gui():
+    def select_save_location():
+        selected_path = filedialog.askdirectory(title="Select Save Location")
+        if selected_path:
+            save_path_var.set(selected_path)  # Update the label or entry with the selected path
+
     def start_scraping():
         urls_text = urls_entry.get("1.0", "end").strip()
         urls = [url.strip() for url in urls_text.splitlines() if url.strip()]
         if not urls:
             messagebox.showerror("Error", "Please enter at least one URL.")
             return
-        
+
         output_format = format_var.get()
         if output_format not in ('json', 'csv', 'both'):
             messagebox.showerror("Error", "Please select a valid format.")
             return
-        
-        save_path = filedialog.askdirectory(title="Select Save Location")
+
+        save_path = save_path_var.get()
         if not save_path:
             messagebox.showerror("Error", "Please select a save location.")
             return
@@ -161,7 +179,7 @@ def run_gui():
         for base_url, scraped_data in all_data.items():
             domain_name = urllib.parse.urlparse(base_url).netloc
             domain_name = domain_name.replace('www.', '').split('.')[0]
-            
+
             if output_format == 'json':
                 save_to_json(scraped_data, f"{save_path}/{domain_name}_data.json")
             elif output_format == 'csv':
@@ -185,9 +203,15 @@ def run_gui():
     tk.Radiobutton(root, text="CSV", variable=format_var, value="csv").grid(row=2, column=1, sticky='w')
     tk.Radiobutton(root, text="Both", variable=format_var, value="both").grid(row=3, column=1, sticky='w')
 
-    tk.Button(root, text="Start Scraping", command=start_scraping).grid(row=4, column=0, columnspan=2, pady=20)
+    tk.Label(root, text="Save Location:").grid(row=4, column=0, padx=10, pady=10)
+    save_path_var = tk.StringVar()  # Variable to store save path
+    tk.Entry(root, textvariable=save_path_var, state='readonly', width=50).grid(row=4, column=1, padx=10, pady=10)
+
+    tk.Button(root, text="Select Location", command=select_save_location).grid(row=5, column=0, columnspan=2, pady=10)
+    tk.Button(root, text="Start Scraping", command=start_scraping).grid(row=6, column=0, columnspan=2, pady=20)
 
     root.mainloop()
+
 
 # Entry point of the program
 if __name__ == "__main__":
