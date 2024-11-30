@@ -174,18 +174,21 @@ def run_gui():
 
     root = tk.Tk()
     root.title("Web Scraping Tool")
+    root.configure(bg="black")
 
-    tk.Label(root, text="Enter URLs (one per line):").grid(row=0, column=0, padx=10, pady=10)
-    urls_entry = tk.Text(root, width=50, height=10)
+    
+
+    tk.Label(root, text="Enter URLs (one per line):", bg="black", fg="white", font=("Arial", 12)).grid(row=0, column=0, padx=10, pady=10)
+    urls_entry = tk.Text(root, width=50, height=5, bg="black", fg="white", insertbackground="white", font="Arial")
     urls_entry.grid(row=0, column=1, padx=10, pady=10)
 
-    tk.Label(root, text="Select Output Format:").grid(row=1, column=0, padx=10, pady=10)
+    tk.Label(root, text="Select Output Format:", bg="black", fg="white", font=("Arial", 12)).grid(row=1, column=0, padx=10, pady=10)
     format_var = tk.StringVar(value="json")
-    tk.Radiobutton(root, text="JSON", variable=format_var, value="json").grid(row=1, column=1, sticky='w')
-    tk.Radiobutton(root, text="CSV", variable=format_var, value="csv").grid(row=2, column=1, sticky='w')
-    tk.Radiobutton(root, text="Both", variable=format_var, value="both").grid(row=3, column=1, sticky='w')
+    tk.Radiobutton(root, text="JSON", variable=format_var, value="json", bg="black", fg="white", font=("Arial", 12), selectcolor="black").grid(row=2, column=1, sticky='w')
+    tk.Radiobutton(root, text="CSV", variable=format_var, value="csv", bg="black", fg="white", font=("Arial", 12), selectcolor="black").grid(row=3, column=1, sticky='w')
+    tk.Radiobutton(root, text="Both", variable=format_var, value="both", bg="black", fg="white", font=("Arial", 12), selectcolor="black").grid(row=4, column=1, sticky='w')
 
-    tk.Button(root, text="Start Scraping", command=start_scraping).grid(row=4, column=0, columnspan=2, pady=20)
+    tk.Button(root, text="Start Scraping", command=start_scraping, bg="orange", fg="white", font=("Arial", 12)).grid(row=5, column=0, columnspan=2, pady=20)
 
     root.mainloop()
 
